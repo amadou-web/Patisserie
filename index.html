@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Saal & Sucré | Pâtisserie Sénégalaise</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;0,700;1,300;1,500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    :root {
+      --bg:           #FBF4E9;
+      --surface:      rgba(251, 244, 233, 0.94);
+      --card:         #FFFFFF;
+      --text:         #1E1209;
+      --muted:        #8A6C57;
+      --accent:       #C4621D;
+      --accent-gold:  #D4922B;
+      --accent-dark:  #2C1A0E;
+      --cream:        #F5EAD8;
+      --cream-2:      #EBD9C0;
+      --border:       rgba(180, 120, 70, 0.12);
+      --border-strong:rgba(180, 120, 70, 0.22);
+      --shadow:       0 8px 32px -8px rgba(44, 26, 14, 0.12);
+      --shadow-strong:0 24px 48px -12px rgba(44, 26, 14, 0.22);
+      --r-pill:       999px;
+      --r-card:       28px;
+      --r-modal:      40px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overflow-x: hidden;
+    }
+
+    /* ── Grain texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: .028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px;
+    }
+
+    /* ── Subtle background dot pattern ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: radial-gradient(circle, rgba(196, 98, 29, 0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    img { max-width: 100%; display: block; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes bouncePop {
+      0%, 100% { transform: scale(1); }
+      40%       { transform: scale(1.12); }
+      70%       { transform: scale(0.96); }
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(10px) scale(0.95); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1); }
+    }
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Layout ── */
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 2; }
+
+    /* ═══════════════════════════════
+       HEADER / NAV
+    ═══════════════════════════════ */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Logo */
+    .logo { text-decoration: none; }
+    .logo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.7rem, 3.2vw, 2.2rem);
+      font-weight: 700;
+      color: var(--accent-dark);
+      letter-spacing: -0.3px;
+      line-height: 1;
+    }
+    .logo-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .logo-tagline {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* Nav actions */
+    .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+    .devis-btn {
+      background: var(--accent-dark);
+      color: #FFEEDD;
+      padding: 10px 20px;
+      border-radius: var(--r-pill);
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.02em;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background .2s, transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 12px rgba(44,26,14,.15);
+    }
+    .devis-btn:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(196,98,29,.3);
+    }
+
+    .cart-btn {
+      position: relative;
+      cursor: pointer;
+      background: var(--cream);
+      border: 1.5px solid var(--border-strong);
+      padding: 9px 18px;
+      border-radius: var(--r-pill);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--accent-dark);
+      transition: all .2s ease;
+      user-select: none;
+    }
+    .cart-btn:hover { background: var(--cream-2); transform: translateY(-1px); }
+    .cart-btn i { font-size: 1rem; color: var(--accent); }
+    .cart-count {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      min-width: 20px;
+      height: 20px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      padding: 0 5px;
+    }
+
+    /* ═══════════════════════════════
+       TICKER STRIP
+    ═══════════════════════════════ */
+    .ticker-strip {
+      background: var(--accent-dark);
+      color: #FFEEDD;
+      padding: 9px 0;
+      overflow: hidden;
+      position: relative;
+      z-index: 99;
+    }
+    .ticker-inner {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 28s linear infinite;
+      width: max-content;
+    }
+    .ticker-inner:hover { animation-play-state: paused; }
+    .ticker-item {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0 38px;
+      opacity: 0.88;
+    }
+    .ticker-item .dot { color: var(--accent-gold); margin-right: 38px; }
+
+    /* ═══════════════════════════════
+       HERO
+    ═══════════════════════════════ */
+    .hero { padding: 56px 0 8px; }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: end;
+      border-bottom: 1px solid var(--border-strong);
+      padding-bottom: 40px;
+      animation: fadeUp .55s ease both;
+    }
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+    .hero-label::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--accent);
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 5.5vw, 4.8rem);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      max-width: 700px;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .hero-desc {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 540px;
+      font-weight: 400;
+      line-height: 1.65;
+    }
+    .hero-stats {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 24px;
+      flex-shrink: 0;
+    }
+    .stat-item { text-align: right; }
+    .stat-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.2rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text);
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .hero-divider {
+      width: 1px;
+      height: 60px;
+      background: var(--border-strong);
+      align-self: center;
+    }
+
+    /* ═══════════════════════════════
+       FILTERS
+    ═══════════════════════════════ */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 48px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border-strong);
+      padding: 8px 18px;
+      border-radius: var(--r-pill);
+      font-weight: 600;
+      font-size: 0.86rem;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .filter-btn.active {
+      background: var(--accent-dark);
+      color: #FFEEDD;
+      border-color: var(--accent-dark);
+    }
+
+    /* ═══════════════════════════════
+       PRODUCT GRID
+    ═══════════════════════════════ */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+
+    .product-card {
+      background: var(--card);
+      border-radius: var(--r-card);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      animation: fadeUp .5s ease both;
+      transition: transform .35s cubic-bezier(.2,.9,.4,1.05), box-shadow .35s ease, border-color .3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-strong);
+      border-color: var(--border-strong);
+    }
+
+    .product-img-wrap {
+      position: relative;
+      height: 220px;
+      overflow: hidden;
+    }
+    .product-img {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      transition: transform .6s ease;
+    }
+    .product-card:hover .product-img { transform: scale(1.06); }
+    .product-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(30,18,9,.35) 0%, transparent 55%);
+    }
+    .product-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: .06em;
+      padding: 5px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+    }
+    .product-badge.sucré {
+      background: rgba(212, 146, 43, .88);
+      color: #fff;
+    }
+    .product-badge.salé {
+      background: rgba(44, 26, 14, .82);
+      color: #FFEEDD;
+    }
+
+    .product-info {
+      padding: 20px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .product-info h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .product-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 18px;
+      gap: 12px;
+    }
+    .price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .price-unit {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .add-btn {
+      background: var(--accent-dark);
+      color: #FFEEDD;
+      padding: 10px 18px;
+      border-radius: var(--r-pill);
+      border: none;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: background .2s, transform .2s;
+      white-space: nowrap;
+    }
+    .add-btn:hover { background: var(--accent); transform: scale(1.04); }
+    .add-btn i { font-size: 0.9rem; }
+
+    /* Empty state */
+    .empty-state {
+      grid-column: 1 / -1;
+      background: var(--cream);
+      border: 1.5px dashed var(--cream-2);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    /* ═══════════════════════════════
+       CART DRAWER
+    ═══════════════════════════════ */
+    .cart-overlay, .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(30, 18, 9, .5);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 200;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity .25s ease, visibility .25s ease;
+    }
+    .cart-overlay.active, .modal.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: 0;
+      width: min(94vw, 460px);
+      height: 100%;
+      background: #fff;
+      z-index: 201;
+      transform: translateX(100%);
+      transition: transform .38s cubic-bezier(.2,.9,.4,1.05);
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+      box-shadow: -12px 0 48px rgba(30,18,9,.14);
+    }
+    .cart-drawer.open { transform: translateX(0); }
+
+    .cart-header {
+      padding: 22px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cart-header-left { display: flex; align-items: center; gap: 10px; }
+    .cart-header-left h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    .cart-header-left .cart-count-badge {
+      background: var(--cream);
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .close-icon {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      cursor: pointer;
+      color: var(--muted);
+      background: var(--cream);
+      transition: all .2s;
+      font-size: 1rem;
+    }
+    .close-icon:hover { background: var(--cream-2); color: var(--text); }
+
+    .cart-items { flex: 1; overflow-y: auto; padding: 16px 24px; }
+
+    .cart-item {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 14px;
+      background: var(--cream);
+      padding: 14px;
+      border-radius: 20px;
+      align-items: center;
+      border: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .cart-item:hover { background: #EFE4D5; }
+    .cart-item-img {
+      width: 64px; height: 64px;
+      border-radius: 14px;
+      background-size: cover;
+      background-position: center;
+      flex: 0 0 auto;
+      border: 1px solid var(--border);
+    }
+    .cart-item-details { flex: 1; min-width: 0; }
+    .cart-item-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cart-item-price { color: var(--muted); font-size: .86rem; }
+    .item-quantity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .qty-btn {
+      background: #fff;
+      border: 1.5px solid var(--border-strong);
+      width: 28px; height: 28px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all .15s;
+      display: grid; place-items: center;
+      line-height: 1;
+    }
+    .qty-btn:hover { background: var(--accent-dark); color: #fff; border-color: var(--accent-dark); }
+    .qty-value { font-weight: 700; font-size: .9rem; min-width: 18px; text-align: center; }
+
+    .remove-item {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      cursor: pointer;
+      color: var(--accent);
+      background: rgba(196,98,29,.1);
+      border: none;
+      flex: 0 0 auto;
+      font-size: .85rem;
+      transition: all .2s;
+    }
+    .remove-item:hover { background: var(--accent); color: #fff; }
+
+    .cart-footer {
+      padding: 22px 24px;
+      border-top: 1px solid var(--border);
+      background: #fff;
+    }
+    .total {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 18px;
+    }
+    .total-label { font-size: .88rem; font-weight: 600; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+    .total-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ═══════════════════════════════
+       BUTTONS (shared)
+    ═══════════════════════════════ */
+    .checkout-btn, .confirm-payment, .submit-devis {
+      background: var(--accent);
+      color: #fff;
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: var(--r-pill);
+      border: none;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background .2s, transform .2s, box-shadow .2s;
+      box-shadow: 0 8px 24px rgba(196,98,29,.28);
+    }
+    .checkout-btn:hover, .confirm-payment:hover, .submit-devis:hover {
+      background: #A84E14;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(196,98,29,.35);
+    }
+
+    .secondary-btn {
+      margin-top: 12px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      width: 100%;
+      font-weight: 600;
+      font-size: .9rem;
+      padding: 8px 0;
+      transition: color .2s;
+    }
+    .secondary-btn:hover { color: var(--text); }
+
+    /* ═══════════════════════════════
+       MODALS
+    ═══════════════════════════════ */
+    .modal {
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-container {
+      background: #fff;
+      width: min(94vw, 540px);
+      border-radius: var(--r-modal);
+      padding: 36px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: fadeUp .3s ease;
+      box-shadow: 0 30px 80px rgba(30,18,9,.25);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .modal-icon {
+      width: 52px; height: 52px;
+      border-radius: 16px;
+      background: var(--cream);
+      display: grid; place-items: center;
+      font-size: 1.35rem;
+      color: var(--accent);
+      margin-bottom: 18px;
+      border: 1px solid var(--border-strong);
+    }
+    .modal-container h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .modal-meta { color: var(--muted); font-size: .9rem; }
+    .modal-total {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .modal-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 22px 0;
+    }
+
+    /* Payment methods */
+    .payment-methods { display: flex; flex-direction: column; gap: 12px; }
+    .method-card {
+      background: var(--cream);
+      border-radius: 20px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all .2s ease;
+    }
+    .method-card:hover { border-color: var(--border-strong); transform: translateX(3px); }
+    .method-card.selected {
+      border-color: var(--accent);
+      background: #FEF2E6;
+    }
+    .method-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      display: grid; place-items: center;
+      background: #fff;
+      flex: 0 0 auto;
+      box-shadow: 0 2px 8px rgba(30,18,9,.08);
+      font-size: 1.1rem;
+    }
+    .method-info strong { display: block; font-weight: 700; font-size: .95rem; margin-bottom: 2px; }
+    .method-info span { font-size: .8rem; color: var(--muted); }
+    .method-check {
+      margin-left: auto;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border-strong);
+      transition: all .2s;
+      display: grid; place-items: center;
+    }
+    .method-card.selected .method-check {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-size: .7rem;
+    }
+
+    /* Form fields */
+    .phone-field, .devis-input, .devis-textarea, .devis-select {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 16px;
+      border: 1.5px solid var(--border-strong);
+      font-size: .95rem;
+      margin-top: 14px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      background: #fff;
+      color: var(--text);
+    }
+    .phone-field:focus, .devis-input:focus, .devis-textarea:focus, .devis-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(196,98,29,.1);
+    }
+    .devis-textarea { resize: vertical; min-height: 110px; border-radius: 16px; }
+
+    .notice-box {
+      margin-top: 16px;
+      background: var(--cream);
+      padding: 14px 16px;
+      border-radius: 16px;
+      color: var(--muted);
+      font-size: .87rem;
+      border: 1px solid var(--border-strong);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .notice-box i { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+
+    /* ═══════════════════════════════
+       FOOTER
+    ═══════════════════════════════ */
+    footer {
+      background: var(--accent-dark);
+      color: rgba(255,238,221,.75);
+      padding: 44px 0;
+      margin-top: 0;
+      position: relative;
+      z-index: 2;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #FFEEDD;
+    }
+    .footer-brand em { font-style: italic; color: var(--accent-gold); }
+    .footer-copy { font-size: .82rem; margin-top: 4px; }
+    .footer-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+    .footer-pill {
+      background: rgba(255,238,221,.08);
+      border: 1px solid rgba(255,238,221,.12);
+      color: rgba(255,238,221,.8);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    /* ═══════════════════════════════
+       TOAST
+    ═══════════════════════════════ */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      background: var(--accent-dark);
+      color: #FFEEDD;
+      padding: 12px 22px;
+      border-radius: var(--r-pill);
+      box-shadow: 0 12px 36px rgba(30,18,9,.25);
+      z-index: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+      white-space: nowrap;
+      max-width: calc(100vw - 32px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: .9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast.show {
+      opacity: 1;
+      animation: toastIn .22s ease;
+    }
+    .toast i { color: var(--accent-gold); }
+
+    /* ═══════════════════════════════
+       UTILITIES
+    ═══════════════════════════════ */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); border: 0;
+    }
+
+    /* ═══════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════ */
+    @media (max-width: 768px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-stats { display: none; }
+    }
+    @media (max-width: 600px) {
+      .nav-bar { flex-direction: column; align-items: stretch; }
+      .actions { justify-content: space-between; }
+      .section-header { flex-direction: column; align-items: flex-start; }
+      .modal-container { padding: 24px; border-radius: 28px; }
+      footer .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════ HEADER ══════════════════════ -->
+  <header class="header">
+    <div class="container nav-bar">
+      <div class="logo">
+        <div class="logo-name">Saal <em>&</em> Sucré</div>
+        <span class="logo-tagline">✦ Pâtisserie artisanale · Dakar</span>
+      </div>
+      <div class="actions">
+        <button class="devis-btn" id="openDevisBtn" type="button">
+          <i class="fa-solid fa-file-invoice"></i> Devis sur mesure
+        </button>
+        <div class="cart-btn" id="cartIcon" role="button" tabindex="0" aria-label="Ouvrir le panier">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span>Panier</span>
+          <span class="cart-count" id="cartCount">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════ TICKER ══════════════════════ -->
+  <div class="ticker-strip" aria-hidden="true">
+    <div class="ticker-inner">
+      <span class="ticker-item">Pâtisserie artisanale sénégalaise</span>
+      <span class="ticker-item"><span class="dot">✦</span> Commandes & événements</span>
+      <span class="ticker-item">Orange Money · Wave · Sans contact</span>
+      <span class="ticker-item"><span class="dot">✦</span> Livraison Dakar</span>
+      <span class="ticker-item">Thiakry · Fataya · Accara · Tarte Bissap</span>
+      <span class="ticker-item"><span class="dot">✦</span> Buffets & anniversaires</span>
+      <span class="ticker-item">Pâtisserie artisanale sénégalaise</span>
+      <span class="ticker-item"><span class="dot">✦</span> Commandes & événements</span>
+      <span class="ticker-item">Orange Money · Wave · Sans contact</span>
+      <span class="ticker-item"><span class="dot">✦</span> Livraison Dakar</span>
+      <span class="ticker-item">Thiakry · Fataya · Accara · Tarte Bissap</span>
+      <span class="ticker-item"><span class="dot">✦</span> Buffets & anniversaires</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ MAIN ══════════════════════ -->
+  <main class="container">
+
+    <!-- Hero -->
+    <section class="hero" aria-label="Introduction">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="hero-label">Artisanat du goût</div>
+          <h1 class="hero-title">
+            Des douceurs locales,<br>
+            <em>du salé généreux.</em>
+          </h1>
+          <p class="hero-desc">
+            Commandez vos produits préférés, filtrez par catégorie, ajoutez au panier et payez en quelques clics.
+            Pour les événements, notre formulaire de devis est à votre service.
+          </p>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-number">8</div>
+            <div class="stat-label">Produits du moment</div>
+          </div>
+          <div class="hero-divider"></div>
+          <div class="stat-item">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Modes de paiement</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section header + filters -->
+    <div class="section-header" aria-label="Filtres produits">
+      <h2 class="section-title">Notre catalogue</h2>
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all" type="button">Tous</button>
+        <button class="filter-btn" data-filter="sucré" type="button">🍯 Sucré</button>
+        <button class="filter-btn" data-filter="salé" type="button">🧂 Salé</button>
+      </div>
+    </div>
+
+    <!-- Products grid -->
+    <section aria-label="Catalogue">
+      <div id="productsGrid" class="products-grid"></div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════ FOOTER ══════════════════════ -->
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <div class="footer-brand">Saal <em>&</em> Sucré</div>
+        <p class="footer-copy">© 2026 · Pâtisserie artisanale, Dakar, Sénégal</p>
+      </div>
+      <div class="footer-pills">
+        <span class="footer-pill">🟠 Orange Money</span>
+        <span class="footer-pill">🔵 Wave</span>
+        <span class="footer-pill">📶 Sans contact</span>
+        <span class="footer-pill">🚚 Livraison Dakar</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════ CART ══════════════════════ -->
+  <div id="cartOverlay" class="cart-overlay" aria-hidden="true"></div>
+
+  <aside id="cartDrawer" class="cart-drawer" aria-label="Panier" aria-hidden="true">
+    <div class="cart-header">
+      <div class="cart-header-left">
+        <h3>Votre panier</h3>
+        <span class="cart-count-badge" id="cartCountDrawer">0 article</span>
+      </div>
+      <div class="close-icon" id="closeCart" role="button" tabindex="0" aria-label="Fermer le panier">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+    </div>
+    <div id="cartItemsList" class="cart-items">
+      <div class="empty-state">Votre panier est vide 🧁</div>
+    </div>
+    <div class="cart-footer">
+      <div class="total">
+        <span class="total-label">Total</span>
+        <span class="total-value" id="cartTotal">0 FCFA</span>
+      </div>
+      <button id="checkoutBtn" class="checkout-btn" type="button">
+        Passer commande <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════ PAYMENT MODAL ══════════════════════ -->
+  <div id="paymentModal" class="modal" aria-hidden="true">
+    <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="paymentTitle">
+      <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
+      <h2 id="paymentTitle">Paiement sécurisé</h2>
+      <p class="modal-meta">Montant à régler : <span class="modal-total" id="modalTotal">0 FCFA</span></p>
+      <div class="modal-divider"></div>
+
+      <div class="payment-methods" id="paymentMethodsContainer">
+        <div class="method-card" data-method="orange" tabindex="0">
+          <div class="method-icon"><i class="fa-solid fa-mobile-screen-button" style="color:#ff6600;"></i></div>
+          <div class="method-info">
+            <strong>Orange Money</strong>
+            <span>Paiement mobile instantané</span>
+          </div>
+          <div class="method-check"></div>
+        </div>
+        <div class="method-card" data-method="wave" tabindex="0">
+          <div class="method-icon"><i class="fa-solid fa-wave-square" style="color:#1a73e8;"></i></div>
+          <div class="method-info">
+            <strong>Wave</strong>
+            <span>Transfert ultra-rapide</span>
+          </div>
+          <div class="method-check"></div>
+        </div>
+        <div class="method-card" data-method="contactless" tabindex="0">
+          <div class="method-icon"><i class="fa-solid fa-wifi" style="color:#2C1A0E;"></i></div>
+          <div class="method-info">
+            <strong>Sans contact</strong>
+            <span>NFC · Tap to Pay</span>
+          </div>
+          <div class="method-check"></div>
+        </div>
+      </div>
+
+      <div id="dynamicPhoneField"></div>
+
+      <button id="confirmPaymentBtn" class="confirm-payment" type="button" style="margin-top:22px;">
+        <i class="fa-solid fa-shield-halved"></i> Confirmer et payer
+      </button>
+      <button id="closePaymentModal" class="secondary-btn" type="button">Annuler</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ DEVIS MODAL ══════════════════════ -->
+  <div id="devisModal" class="modal" aria-hidden="true">
+    <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="devisTitle">
+      <div class="modal-icon"><i class="fa-solid fa-file-signature"></i></div>
+      <h2 id="devisTitle">Devis personnalisé</h2>
+      <p class="modal-meta" style="margin-top:6px;">
+        Pour un buffet, un anniversaire, ou tout événement. Réponse sous 24h.
+      </p>
+      <div class="modal-divider"></div>
+
+      <form id="devisForm">
+        <input type="text"  id="devisName"        class="devis-input"  placeholder="Nom complet *" required />
+        <input type="email" id="devisEmail"        class="devis-input"  placeholder="Email *" required />
+        <input type="tel"   id="devisPhone"        class="devis-input"  placeholder="Téléphone WhatsApp *" required />
+        <select             id="devisEventType"    class="devis-input devis-select">
+          <option value="Anniversaire">🎂 Anniversaire</option>
+          <option value="Mariage">💍 Mariage</option>
+          <option value="Entreprise">🏢 Événement d'entreprise</option>
+          <option value="Autre">✦ Autre</option>
+        </select>
+        <textarea id="devisDescription" class="devis-textarea" placeholder="Décrivez votre projet : produits, quantités, date, livraison… *" required></textarea>
+
+        <div class="notice-box">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>Vous pouvez mentionner des articles de notre catalogue. Un conseiller vous recontacte sous 24h.</span>
+        </div>
+
+        <button type="submit" class="submit-devis" id="sendDevisBtn" style="margin-top:22px;">
+          Envoyer la demande <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+      <button id="closeDevisModal" class="secondary-btn" type="button">Fermer</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" aria-live="polite">
+    <i class="fa-solid fa-check"></i>
+    <span id="toastMsg"></span>
+  </div>
+
+  <!-- ══════════════════════ SCRIPT ══════════════════════ -->
+  <script>
+    const products = [
+      { id: 1, name: "Thiakry Ndamli",      type: "sucré", price: 1800, image: "https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?w=800&h=600&fit=crop", desc: "Dessert sénégalais doux et crémeux, parfait pour une pause gourmande." },
+      { id: 2, name: "Samoussa Légume",      type: "salé",  price: 1200, image: "https://images.unsplash.com/photo-1627662057349-6c0b9a9b5d5b?w=800&h=600&fit=crop", desc: "Croquant, savoureux et idéal pour les petites faims." },
+      { id: 3, name: "Fataya Poulet",        type: "salé",  price: 1500, image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800&h=600&fit=crop", desc: "Un classique généreux, relevé juste comme il faut." },
+      { id: 4, name: "Beignet Moelleux",     type: "sucré", price: 1000, image: "https://images.unsplash.com/photo-1624352594246-3238b3b9d6b3?w=800&h=600&fit=crop", desc: "Moelleux, léger et terriblement efficace." },
+      { id: 5, name: "Croissant Pur Beurre", type: "sucré", price: 1400, image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800&h=600&fit=crop", desc: "Feuilletage doré, parfum de beurre, tout simplement." },
+      { id: 6, name: "Accara (Beignet salé)",type: "salé",  price: 1100, image: "https://images.unsplash.com/photo-1547592180-85f173990554?w=800&h=600&fit=crop", desc: "Le snack qui fait toujours l'unanimité." },
+      { id: 7, name: "Tarte Bissap",         type: "sucré", price: 2200, image: "https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=800&h=600&fit=crop", desc: "Une touche fruitée et locale, bien élégante." },
+      { id: 8, name: "Quiche Épinard",       type: "salé",  price: 2000, image: "https://images.unsplash.com/photo-1584218148714-4a2b6daf0bc2?w=800&h=600&fit=crop", desc: "Crémeuse, équilibrée et très rassurante." }
+    ];
+
+    const state = { cart: [], currentFilter: 'all', selectedMethod: null, currentTotal: 0 };
+
+    const els = {
+      productsGrid:        document.getElementById('productsGrid'),
+      cartCount:           document.getElementById('cartCount'),
+      cartCountDrawer:     document.getElementById('cartCountDrawer'),
+      cartItemsList:       document.getElementById('cartItemsList'),
+      cartTotal:           document.getElementById('cartTotal'),
+      cartOverlay:         document.getElementById('cartOverlay'),
+      cartDrawer:          document.getElementById('cartDrawer'),
+      cartIcon:            document.getElementById('cartIcon'),
+      closeCart:           document.getElementById('closeCart'),
+      checkoutBtn:         document.getElementById('checkoutBtn'),
+      paymentModal:        document.getElementById('paymentModal'),
+      modalTotal:          document.getElementById('modalTotal'),
+      dynamicPhoneField:   document.getElementById('dynamicPhoneField'),
+      confirmPaymentBtn:   document.getElementById('confirmPaymentBtn'),
+      closePaymentModal:   document.getElementById('closePaymentModal'),
+      devisModal:          document.getElementById('devisModal'),
+      openDevisBtn:        document.getElementById('openDevisBtn'),
+      closeDevisModal:     document.getElementById('closeDevisModal'),
+      devisForm:           document.getElementById('devisForm'),
+      sendDevisBtn:        document.getElementById('sendDevisBtn'),
+      toast:               document.getElementById('toast'),
+      toastMsg:            document.getElementById('toastMsg')
+    };
+
+    function fmt(v) { return new Intl.NumberFormat('fr-FR').format(v) + ' FCFA'; }
+
+    function toast(message) {
+      els.toastMsg.textContent = message;
+      els.toast.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => els.toast.classList.remove('show'), 2600);
+    }
+
+    function saveCart()  { localStorage.setItem('saalCart', JSON.stringify(state.cart)); }
+    function loadCart()  {
+      try { state.cart = JSON.parse(localStorage.getItem('saalCart')) || []; }
+      catch { state.cart = []; }
+      renderCartUI(); updateCartCount();
+    }
+
+    function updateCartCount() {
+      const n = state.cart.reduce((s, i) => s + i.quantity, 0);
+      els.cartCount.textContent = n;
+      els.cartCountDrawer.textContent = n === 0 ? '0 article' : n === 1 ? '1 article' : `${n} articles`;
+    }
+
+    function renderProducts() {
+      const list = products.filter(p => state.currentFilter === 'all' || p.type === state.currentFilter);
+      if (!list.length) {
+        els.productsGrid.innerHTML = `<div class="empty-state">Aucun produit dans cette catégorie pour le moment.</div>`;
+        return;
+      }
+      els.productsGrid.innerHTML = list.map((p, i) => `
+        <article class="product-card" style="animation-delay:${Math.min(i * 0.05, 0.3)}s">
+          <div class="product-img-wrap">
+            <div class="product-img" style="background-image:url('${p.image}')"></div>
+            <div class="product-img-overlay"></div>
+            <span class="product-badge ${p.type}">${p.type === 'sucré' ? '🍯 Sucré' : '🧂 Salé'}</span>
+          </div>
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <p class="product-desc">${p.desc}</p>
+            <div class="product-footer">
+              <div>
+                <div class="price">${fmt(p.price)}</div>
+                <div class="price-unit">par unité</div>
+              </div>
+              <button class="add-btn" type="button" data-add-id="${p.id}">
+                <i class="fa-solid fa-plus"></i> Ajouter
+              </button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function renderCartUI() {
+      if (!state.cart.length) {
+        els.cartItemsList.innerHTML = `<div class="empty-state">Votre panier est vide 🧁</div>`;
+        els.cartTotal.textContent = fmt(0);
+        return;
+      }
+      let total = 0;
+      els.cartItemsList.innerHTML = state.cart.map(item => {
+        total += item.price * item.quantity;
+        return `
+          <div class="cart-item" data-id="${item.id}">
+            <div class="cart-item-img" style="background-image:url('${item.image}')"></div>
+            <div class="cart-item-details">
+              <div class="cart-item-title">${item.name}</div>
+              <div class="cart-item-price">${fmt(item.price)}</div>
+              <div class="item-quantity">
+                <button class="qty-btn" type="button" data-action="decr" data-id="${item.id}">−</button>
+                <span class="qty-value" aria-label="Quantité">${item.quantity}</span>
+                <button class="qty-btn" type="button" data-action="incr" data-id="${item.id}">+</button>
+              </div>
+            </div>
+            <button class="remove-item" type="button" data-action="remove" data-id="${item.id}" aria-label="Supprimer ${item.name}">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+      }).join('');
+      els.cartTotal.textContent = fmt(total);
+    }
+
+    function addToCart(product) {
+      const ex = state.cart.find(i => i.id === product.id);
+      if (ex) ex.quantity += 1; else state.cart.push({ ...product, quantity: 1 });
+      saveCart(); renderCartUI(); updateCartCount();
+      els.cartIcon.style.animation = 'none';
+      requestAnimationFrame(() => { els.cartIcon.style.animation = 'bouncePop .35s ease'; });
+      toast(`${product.name} ajouté au panier`);
+    }
+
+    function changeQty(id, delta) {
+      const idx = state.cart.findIndex(i => i.id === id);
+      if (idx === -1) return;
+      state.cart[idx].quantity += delta;
+      if (state.cart[idx].quantity <= 0) state.cart.splice(idx, 1);
+      saveCart(); renderCartUI(); updateCartCount();
+    }
+
+    function removeFromCart(id) {
+      state.cart = state.cart.filter(i => i.id !== id);
+      saveCart(); renderCartUI(); updateCartCount();
+      toast('Produit retiré du panier');
+    }
+
+    function openCart()  {
+      els.cartOverlay.classList.add('active');
+      els.cartDrawer.classList.add('open');
+      els.cartOverlay.setAttribute('aria-hidden','false');
+      els.cartDrawer.setAttribute('aria-hidden','false');
+    }
+    function closeCart() {
+      els.cartOverlay.classList.remove('active');
+      els.cartDrawer.classList.remove('open');
+      els.cartOverlay.setAttribute('aria-hidden','true');
+      els.cartDrawer.setAttribute('aria-hidden','true');
+    }
+    function openModal(m)  { m.classList.add('active');  m.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+    function closeModal(m) { m.classList.remove('active');m.setAttribute('aria-hidden','true');  document.body.style.overflow=''; }
+
+    function renderPhoneField(method) {
+      if (method === 'orange' || method === 'wave') {
+        const label = method === 'orange' ? 'Orange Money' : 'Wave';
+        els.dynamicPhoneField.innerHTML = `
+          <label class="sr-only" for="phoneNumberInput">Numéro ${label}</label>
+          <input type="tel" id="phoneNumberInput" class="phone-field" placeholder="Numéro ${label} (ex: 77 123 45 67)" required />
+        `;
+      } else if (method === 'contactless') {
+        els.dynamicPhoneField.innerHTML = `
+          <div style="background:var(--cream);border-radius:16px;padding:16px;text-align:center;margin-top:14px;border:1px solid var(--border-strong);color:var(--muted);font-size:.9rem;">
+            <i class="fa-solid fa-mobile-screen" style="margin-right:8px;"></i>Approchez votre carte ou smartphone (NFC)
+          </div>
+        `;
+      } else {
+        els.dynamicPhoneField.innerHTML = '';
+      }
+    }
+
+    /* ── Event delegation ── */
+    document.addEventListener('click', e => {
+      const addBtn = e.target.closest('[data-add-id]');
+      if (addBtn) {
+        const p = products.find(p => p.id === Number(addBtn.dataset.addId));
+        if (p) addToCart(p);
+        return;
+      }
+
+      const qtyBtn = e.target.closest('[data-action]');
+      if (qtyBtn && qtyBtn.closest('.cart-item')) {
+        const { action, id } = qtyBtn.dataset;
+        const numId = Number(id);
+        if (action === 'decr') changeQty(numId, -1);
+        if (action === 'incr') changeQty(numId, 1);
+        if (action === 'remove') removeFromCart(numId);
+        return;
+      }
+
+      const methodCard = e.target.closest('.method-card');
+      if (methodCard && els.paymentModal.classList.contains('active')) {
+        document.querySelectorAll('.method-card').forEach(c => {
+          c.classList.remove('selected');
+          c.querySelector('.method-check').innerHTML = '';
+        });
+        methodCard.classList.add('selected');
+        methodCard.querySelector('.method-check').innerHTML = '<i class="fa-solid fa-check"></i>';
+        state.selectedMethod = methodCard.dataset.method;
+        renderPhoneField(state.selectedMethod);
+        return;
+      }
+
+      if (e.target === els.cartOverlay)  closeCart();
+      if (e.target === els.devisModal)   closeModal(els.devisModal);
+      if (e.target === els.paymentModal) closeModal(els.paymentModal);
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeCart(); closeModal(els.paymentModal); closeModal(els.devisModal); }
+      if ((e.key === 'Enter' || e.key === ' ') && document.activeElement === els.cartIcon) { e.preventDefault(); openCart(); }
+    });
+
+    els.cartIcon.addEventListener('click', openCart);
+    els.closeCart.addEventListener('click', closeCart);
+    els.closeCart.addEventListener('keydown', e => { if (e.key === 'Enter') closeCart(); });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.currentFilter = btn.dataset.filter;
+        renderProducts();
+      });
+    });
+
+    els.checkoutBtn.addEventListener('click', () => {
+      if (!state.cart.length) { toast('Ajoutez d\'abord des produits au panier'); return; }
+      state.currentTotal = state.cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      els.modalTotal.textContent = fmt(state.currentTotal);
+      state.selectedMethod = null;
+      document.querySelectorAll('.method-card').forEach(c => { c.classList.remove('selected'); c.querySelector('.method-check').innerHTML = ''; });
+      els.dynamicPhoneField.innerHTML = '';
+      closeCart();
+      openModal(els.paymentModal);
+    });
+
+    els.confirmPaymentBtn.addEventListener('click', () => {
+      if (!state.selectedMethod) { toast('Choisissez un mode de paiement'); return; }
+      if (state.selectedMethod === 'orange' || state.selectedMethod === 'wave') {
+        const ph = document.getElementById('phoneNumberInput');
+        if (!ph || ph.value.trim().length < 8) { toast('Numéro valide requis'); return; }
+      }
+
+      const btn = els.confirmPaymentBtn;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner" style="animation:spin 1s linear infinite;display:inline-block;"></i> Traitement…';
+
+      setTimeout(() => {
+        const label = { orange: 'Orange Money', wave: 'Wave', contactless: 'Sans contact' }[state.selectedMethod];
+        alert(`✅ Paiement réussi !\n\nMerci pour votre commande.\nMode : ${label}\nMontant : ${fmt(state.currentTotal)}\nLivraison Dakar estimée sous 24–48h.`);
+        state.cart = []; saveCart(); renderCartUI(); updateCartCount();
+        closeModal(els.paymentModal);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Confirmer et payer';
+        toast('Commande validée — merci !');
+      }, 1100);
+    });
+
+    els.closePaymentModal.addEventListener('click', () => closeModal(els.paymentModal));
+    els.openDevisBtn.addEventListener('click',     () => openModal(els.devisModal));
+    els.closeDevisModal.addEventListener('click',  () => closeModal(els.devisModal));
+
+    els.devisForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name  = document.getElementById('devisName').value.trim();
+      const email = document.getElementById('devisEmail').value.trim();
+      const phone = document.getElementById('devisPhone').value.trim();
+      const type  = document.getElementById('devisEventType').value;
+      const desc  = document.getElementById('devisDescription').value.trim();
+      if (!name || !email || !phone || !desc) { toast('Remplissez tous les champs obligatoires'); return; }
+
+      const btn = els.sendDevisBtn;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner" style="animation:spin 1s linear infinite;display:inline-block;"></i> Envoi…';
+
+      setTimeout(() => {
+        alert(`✅ Demande envoyée !\n\nBonjour ${name}, votre demande pour "${type}" est bien reçue.\nUn conseiller Saal & Sucré vous contactera sous 24h au ${phone} ou par email (${email}).`);
+        els.devisForm.reset();
+        closeModal(els.devisModal);
+        btn.disabled = false;
+        btn.innerHTML = 'Envoyer la demande <i class="fa-solid fa-paper-plane"></i>';
+        toast('Demande de devis envoyée');
+      }, 1000);
+    });
+
+    loadCart();
+    renderProducts();
+  </script>
+</body>
+</html>
